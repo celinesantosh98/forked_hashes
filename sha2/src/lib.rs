@@ -25,6 +25,9 @@ use digest::{
     consts::{U28, U32, U48, U64},
 };
 
+pub use wrapper::Sha256Impl;
+//use crate::bindings::mwrapper::crypto::crypto::Buffer;
+
 /// Block-level types
 pub mod block_api;
 
@@ -32,13 +35,13 @@ pub mod block_api;
 mod consts;
 mod sha256;
 mod sha512;
+//mod bindings;
+pub mod wrapper;
 
-digest::buffer_fixed!(
+//digest::buffer_fixed!(
     /// SHA-256 hasher.
-    pub struct Sha256(CtOutWrapper<block_api::Sha256VarCore, U32>);
-    oid: "2.16.840.1.101.3.4.2.1";
-    impl: FixedHashTraits;
-);
+    pub type Sha256 = Sha256Impl;
+//);
 digest::buffer_fixed!(
     /// SHA-384 hasher.
     pub struct Sha384(CtOutWrapper<block_api::Sha512VarCore, U48>);
