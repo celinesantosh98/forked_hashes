@@ -1,19 +1,22 @@
-
-
-//use crate::bindings::mwrapper::crypto::crypto::Buffer;
+// use crate::mwrapper::crypto::crypto::Buffer;
 
 use digest::{Update, OutputSizeUser, FixedOutput, Output};
 use generic_array::{GenericArray, typenum::U32};
 use digest::{Reset, FixedOutputReset};
 
+wit_bindgen::generate!({
+   world: "noise-demo",
+   generate_all
+});
+
 pub struct Sha256Impl {
-    inner: Buffer,
+    inner: mwrapper::crypto::crypto::Buffer,
 }
 
 impl Sha256Impl {
     pub fn new() -> Self {
         Self {
-            inner: Buffer::new(),
+            inner: mwrapper::crypto::crypto::Buffer::new(),
         }
     }
 }

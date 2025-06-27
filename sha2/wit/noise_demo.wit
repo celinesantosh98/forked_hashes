@@ -1,0 +1,19 @@
+package mwasi:noise-demo@0.1.0;
+
+package mwrapper:crypto@0.1.0 {
+   interface crypto {
+
+       resource buffer {
+           constructor();
+           update: func(input: list<u8>);
+           finalize: func() -> list<u8>;
+           reset: func();
+           finalize-reset: func() -> list<u8>;
+       }
+   }
+}
+
+world noise-demo {
+   import mwrapper:crypto/crypto@0.1.0;
+   //import mwasi:crypto-wrapper/crypto@0.1.0;
+}
