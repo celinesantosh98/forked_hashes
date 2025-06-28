@@ -35,7 +35,6 @@ pub mod block_api;
 mod consts;
 mod sha256;
 mod sha512;
-//mod bindings;
 pub mod wrapper;
 
 //digest::buffer_fixed!(

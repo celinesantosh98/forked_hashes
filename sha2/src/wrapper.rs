@@ -4,16 +4,21 @@
 
 use digest::{Update, OutputSizeUser, FixedOutput, Output};
 use generic_array::{GenericArray, typenum::U32};
-use digest::{Reset, FixedOutputReset};
+use digest::{Reset, FixedOutputReset, Digest, HashMarker,};
+
+wit_bindgen::generate!({
+    world: "noise-demo",
+    generate_all
+ });
 
 pub struct Sha256Impl {
-    inner: Buffer,
+    inner: mwrapper::crypto::crypto::Buffer,
 }
 
 impl Sha256Impl {
     pub fn new() -> Self {
         Self {
-            inner: Buffer::new(),
+            inner: mwrapper::crypto::crypto::Buffer::new(),
         }
     }
 }
@@ -56,6 +61,47 @@ impl FixedOutputReset for Sha256Impl {
         out.copy_from_slice(&hash);
     }
 }
+
+impl HashMarker for Sha256Impl {}
+// impl Digest for Sha256Impl { // ✅ Implemented full Digest trait
+//     fn new() -> Self {
+//         Self::default()
+//     }
+
+//     fn update(&mut self, data: &[u8]) {
+//         <Self as Update>::update(self, data);
+//     }
+
+//     fn finalize(self) -> Output<Self> {
+//         let mut out = Output::<Self>::default();
+//         <Self as FixedOutput>::finalize_into(self, &mut out);
+//         out
+//     }
+
+//     fn finalize_reset(&mut self) -> Output<Self> {
+//         let mut out = Output::<Self>::default();
+//         <Self as FixedOutputReset>::finalize_into_reset(self, &mut out);
+//         out
+//     }
+
+//     fn reset(&mut self) {
+//         <Self as Reset>::reset(self);
+//     }
+
+//     fn output_size() -> usize {
+//         <Self as OutputSizeUser>::OutputSize::to_usize()
+//     }
+
+//     // fn chain(mut self, data: impl AsRef<[u8]>) -> Self {
+//     //     self.update(data.as_ref());
+//     //     self
+//     // }
+
+//     // fn chain_update(mut self, data: impl AsRef<[u8]>) -> Self {
+//     //     self.update(data.as_ref());
+//     //     self
+//     // }
+// }
 
 // --- WIT Guest Resource Exports ---
 

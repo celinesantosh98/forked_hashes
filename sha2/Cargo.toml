@@ -19,6 +19,8 @@ categories = ["cryptography", "no-std"]
 digest = "0.11.0-rc.0"
 cfg-if = "1"
 generic-array = "1.0" 
+#wit-bindgen-rt = { version = "0.42.1", features = ["bitflags"] }
+wit-bindgen = "0.42.1"
 
 [target.'cfg(any(target_arch = "aarch64", target_arch = "x86_64", target_arch = "x86"))'.dependencies]
 cpufeatures = "0.2"
