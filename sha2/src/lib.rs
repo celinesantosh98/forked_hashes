@@ -26,6 +26,7 @@ use digest::{
 };
 
 pub use wrapper::Sha256Impl;
+
 //use crate::bindings::mwrapper::crypto::crypto::Buffer;
 
 /// Block-level types
@@ -36,6 +37,13 @@ mod consts;
 mod sha256;
 mod sha512;
 pub mod wrapper;
+mod bindings;
+#[cfg(any(feature = "use-curve25519", feature = "p256"))]
+pub mod derive_pubkey;
+
+#[cfg(any(feature = "use-curve25519", feature = "p256"))]
+pub use derive_pubkey::*;
+
 
 //digest::buffer_fixed!(
     /// SHA-256 hasher.

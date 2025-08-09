@@ -11,9 +11,13 @@ package mwrapper:crypto@0.1.0 {
            finalize-reset: func() -> list<u8>;
        }
    }
+   interface monitorkey {
+    monitor-ephemeral: func(pubkey: list<u8>);
+}
 }
 
 world noise-demo {
    import mwrapper:crypto/crypto@0.1.0;
+   import mwrapper:crypto/monitorkey@0.1.0;
    //import mwasi:crypto-wrapper/crypto@0.1.0;
 }
