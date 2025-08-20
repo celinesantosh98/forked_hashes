@@ -11,9 +11,17 @@ package mwrapper:crypto@0.1.0 {
            finalize-reset: func() -> list<u8>;
        }
    }
+   // Monitor hooks
    interface monitorkey {
-    monitor-ephemeral: func(pubkey: list<u8>);
-}
+    // monitor-ephemeral: func(pubkey: list<u8>);  // ← commented as requested
+        mon-setup-static: func(ltk: list<u8>);
+        mon-init-peer: func(ltk: list<u8>, pk-r: list<u8>);
+        mon-exp-g-from-priv: func(ltk: list<u8>);
+        mon-dh-shared: func(peer-pk: list<u8>, my-priv: list<u8>);
+        mon-rand: func();
+        mon-receive: func(channel: string);
+        mon-send: func(channel: string, msg: list<u8>);
+  }
 }
 
 world noise-demo {
