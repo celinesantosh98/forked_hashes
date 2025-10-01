@@ -25,6 +25,11 @@ package mwrapper:crypto@0.1.0 {
     mon-exp-g-pair: func(ltk: list<u8>, expgltk: list<u8>);
     mon-hash-pair: func(proto: string, digest32: list<u8>);
     mon-precompute: func(ltk: list<u8>);
+    mon-hpair-pk-r: func(label: list<u8>, rhs-pk-r: list<u8>);
+    mon-hpair-expgltk-i: func(label: list<u8>, rhs-expgltk-i: list<u8>);
+    mon-hpair-proto-identifier: func(digest32: list<u8>, identifier: string);
+    mon-exp-gr-pair: func(n: list<u8>, rhs-expgr: list<u8>);
+    mon-ephemeral-exp-from-rand-tag: func(n: list<u8>);
   }
 }
 
