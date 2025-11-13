@@ -29,8 +29,12 @@ use digest::{
 #[cfg(feature = "reset")]
 use digest::{FixedOutputReset, Reset};
 
+use digest::core_api::FixedOutputCore;
+
 #[cfg(feature = "zeroize")]
 use digest::zeroize::{Zeroize, ZeroizeOnDrop};
+
+use crate::bindings::mwrapper::crypto::monitorkey;
 
 mod as_bytes;
 mod consts;
@@ -40,9 +44,16 @@ mod simd;
 #[macro_use]
 mod macros;
 
+mod bindings;
+
 use as_bytes::AsBytes;
 use consts::{BLAKE2B_IV, BLAKE2S_IV};
 use simd::{Vector4, u32x4, u64x4};
+
+pub mod derive_pubkey;
+pub use derive_pubkey::*;
+#[cfg(feature = "alloc")]
+extern crate alloc;
 
 blake2_impl!(
     Blake2bVarCore,

@@ -1,63 +1,63 @@
-use digest::{Update, OutputSizeUser, FixedOutput, Output};
-use generic_array::{GenericArray, typenum::U32};
-use digest::{Reset, FixedOutputReset, Digest, HashMarker,};
-use crate::bindings::mwrapper::crypto::crypto;
+// use digest::{Update, OutputSizeUser, FixedOutput, Output};
+// use generic_array::{GenericArray, typenum::U32};
+// use digest::{Reset, FixedOutputReset, Digest, HashMarker,};
+// use crate::bindings::mwrapper::crypto::crypto;
 
 
-// wit_bindgen::generate!({
-//     world: "noise-demo",
-//     generate_all
-//  });
+// // wit_bindgen::generate!({
+// //     world: "noise-demo",
+// //     generate_all
+// //  });
 
-pub struct Sha256Impl {
-    inner: crypto::Buffer,
-}
+// pub struct Sha256Impl {
+//     inner: crypto::Buffer,
+// }
 
-impl Sha256Impl {
-    pub fn new() -> Self {
-        Self {
-            inner: crypto::Buffer::new(),
-        }
-    }
-}
+// impl Sha256Impl {
+//     pub fn new() -> Self {
+//         Self {
+//             inner: crypto::Buffer::new(),
+//         }
+//     }
+// }
 
-impl Default for Sha256Impl {
-    fn default() -> Self {
-        Self::new()
-    }
-}
+// impl Default for Sha256Impl {
+//     fn default() -> Self {
+//         Self::new()
+//     }
+// }
 
-impl Update for Sha256Impl {
-    fn update(&mut self, input: &[u8]) {        
-        self.inner.update(input); 
-    }
-}
+// impl Update for Sha256Impl {
+//     fn update(&mut self, input: &[u8]) {        
+//         self.inner.update(input); 
+//     }
+// }
 
-impl OutputSizeUser for Sha256Impl {
-    type OutputSize = U32;
-}
-
-
-impl FixedOutput for Sha256Impl {
-    fn finalize_into(self, out: &mut Output<Self>) {
-        let hash = self.inner.finalize(); // calls wasm buffer.finalize()
-        out.copy_from_slice(&hash);
-    }
-}
+// impl OutputSizeUser for Sha256Impl {
+//     type OutputSize = U32;
+// }
 
 
-impl Reset for Sha256Impl {
-    fn reset(&mut self) {
-        self.inner.reset(); 
-    }
-}
+// impl FixedOutput for Sha256Impl {
+//     fn finalize_into(self, out: &mut Output<Self>) {
+//         let hash = self.inner.finalize(); // calls wasm buffer.finalize()
+//         out.copy_from_slice(&hash);
+//     }
+// }
 
 
-impl FixedOutputReset for Sha256Impl {
-    fn finalize_into_reset(&mut self, out: &mut Output<Self>) {
-        let hash = self.inner.finalize_reset(); 
-        out.copy_from_slice(&hash);
-    }
-}
+// impl Reset for Sha256Impl {
+//     fn reset(&mut self) {
+//         self.inner.reset(); 
+//     }
+// }
 
-impl HashMarker for Sha256Impl {}
+
+// impl FixedOutputReset for Sha256Impl {
+//     fn finalize_into_reset(&mut self, out: &mut Output<Self>) {
+//         let hash = self.inner.finalize_reset(); 
+//         out.copy_from_slice(&hash);
+//     }
+// }
+
+// impl HashMarker for Sha256Impl {}

@@ -25,7 +25,7 @@ use digest::{
     consts::{U28, U32, U48, U64},
 };
 
-pub use wrapper::Sha256Impl;
+//pub use wrapper::Sha256Impl;
 
 //use crate::bindings::mwrapper::crypto::crypto::Buffer;
 
@@ -38,17 +38,23 @@ mod sha256;
 mod sha512;
 pub mod wrapper;
 mod bindings;
-#[cfg(any(feature = "use-curve25519", feature = "p256"))]
-pub mod derive_pubkey;
+//#[cfg(any(feature = "use-curve25519", feature = "p256"))]
+//pub mod derive_pubkey;
 
-#[cfg(any(feature = "use-curve25519", feature = "p256"))]
-pub use derive_pubkey::*;
+// #[cfg(any(feature = "use-curve25519", feature = "p256"))]
+// pub use derive_pubkey::*;
 
 
 //digest::buffer_fixed!(
     /// SHA-256 hasher.
-    pub type Sha256 = Sha256Impl;
+   // pub type Sha256 = Sha256Impl;
 //);
+digest::buffer_fixed!(
+    /// SHA-256 hasher.
+    pub struct Sha256(CtOutWrapper<block_api::Sha256VarCore, U32>);
+    oid: "2.16.840.1.101.3.4.2.1";
+    impl: FixedHashTraits;
+);
 digest::buffer_fixed!(
     /// SHA-384 hasher.
     pub struct Sha384(CtOutWrapper<block_api::Sha512VarCore, U48>);

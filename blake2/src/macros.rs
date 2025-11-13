@@ -1,3 +1,6 @@
+use crate::bindings::mwrapper::crypto::monitorkey;
+use base64::{engine::general_purpose, Engine as _};
+//use digest::core_api::FixedOutputCore;
 macro_rules! blake2_impl {
     (
         $name:ident, $alg_name:expr, $word:ident, $vec:ident, $bytes:ident,
@@ -11,6 +14,8 @@ macro_rules! blake2_impl {
             t: u64,
             #[cfg(feature = "reset")]
             h0: [$vec; 2],
+            #[cfg(feature = "alloc")]
+            preimage: alloc::vec::Vec<u8>, 
         }
 
         impl $name {
@@ -88,6 +93,8 @@ macro_rules! blake2_impl {
                     h0: h.clone(),
                     h,
                     t: 0,
+                    #[cfg(feature = "alloc")]
+                    preimage: alloc::vec::Vec::new(),
                 }
             }
 
@@ -194,6 +201,9 @@ macro_rules! blake2_impl {
             fn update_blocks(&mut self, blocks: &[Block<Self>]) {
                 for block in blocks {
                     self.t += block.len() as u64;
+                    #[cfg(feature = "alloc")]
+                    self.preimage.extend_from_slice(&*block); 
+
                     self.compress(block, 0, 0);
                 }
             }
@@ -201,6 +211,39 @@ macro_rules! blake2_impl {
 
         impl OutputSizeUser for $name {
             type OutputSize = $bytes;
+        }
+
+        impl FixedOutputCore for $name {
+            #[inline]
+            fn finalize_fixed_core(
+                &mut self,
+                buffer: &mut Buffer<Self>,
+                out: &mut Output<Self>,
+            ) {
+                let tail_len = buffer.get_pos() as usize;
+                self.t += tail_len as u64;
+        
+                // Pad for compression; only first tail_len bytes are real input.
+                let block = buffer.pad_with_zeros();
+        
+                #[cfg(feature = "alloc")]
+                self.preimage.extend_from_slice(&block[..tail_len]);
+        
+                // Compute digest
+                self.finalize_with_flag(&block, 0, out);
+        
+                // Emit: preimage + digest
+                #[cfg(feature = "alloc")]
+                {
+                    let digest_bytes: &[u8] = out.as_slice();
+                    monitorkey::mon_hash(&self.preimage, digest_bytes);
+                    // eprintln!(
+                    //     "[blake2/fork] finalize_fixed_core in={} out={}",
+                    //     self.preimage.len(),
+                    //     digest_bytes.len()
+                    // );
+                }
+            }
         }
 
         impl VariableOutputCore for $name {
@@ -220,9 +263,28 @@ macro_rules! blake2_impl {
                 buffer: &mut Buffer<Self>,
                 out: &mut Output<Self>,
             ) {
-                self.t += buffer.get_pos() as u64;
+                // self.t += buffer.get_pos() as u64;
+                // let block = buffer.pad_with_zeros();
+                // self.finalize_with_flag(&block, 0, out);
+                let tail_len = buffer.get_pos() as usize;
+                self.t += tail_len as u64;
+            
+                // Pad (for compression), but only the first `tail_len` bytes are real input.
                 let block = buffer.pad_with_zeros();
+            
+                #[cfg(feature = "alloc")]
+                self.preimage.extend_from_slice(&block[..tail_len]);
+            
+                // Compute digest into `out`
                 self.finalize_with_flag(&block, 0, out);
+            
+                // Emit exactly once: preimage + real digest bytes
+                #[cfg(feature = "alloc")]
+                {
+                    let digest_bytes: &[u8] = out.as_slice();
+                    monitorkey::mon_hash(&self.preimage, digest_bytes);
+                }
+
             }
         }
 

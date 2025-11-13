@@ -14,6 +14,12 @@ categories = ["cryptography", "no-std"]
 
 [dependencies]
 digest = { version = "0.11.0-rc.0", features = ["mac"] }
+base64 = "0.21"
+wit-bindgen = "0.42.1"
+arrayref = "0.3"
+blake2 = "0.10"
+sha2 = "0.10"
+curve25519-dalek = { version = "4.1.3", default-features = false, optional = true }
 
 [dev-dependencies]
 digest = { version = "0.11.0-rc.0", features = ["dev"] }
@@ -29,6 +35,7 @@ reset = [] # Enable reset functionality
 #simd_opt = ["simd"]
 #simd_asm = ["simd_opt"]
 size_opt = [] # Optimize for code size. Removes some `inline(always)`
+use-curve25519 = ["dep:curve25519-dalek"] 
 
 [package.metadata.docs.rs]
 all-features = true
