@@ -1,5 +1,6 @@
-use crate::bindings::mwrapper::crypto::monitorkey;
+// use crate::bindings::mwrapper::crypto::monitorkey;
 use base64::{engine::general_purpose, Engine as _};
+// use monitor_bindings::monitor::mon_hash;
 //use digest::core_api::FixedOutputCore;
 macro_rules! blake2_impl {
     (
@@ -201,8 +202,6 @@ macro_rules! blake2_impl {
             fn update_blocks(&mut self, blocks: &[Block<Self>]) {
                 for block in blocks {
                     self.t += block.len() as u64;
-                    #[cfg(feature = "alloc")]
-                    self.preimage.extend_from_slice(&*block); 
 
                     self.compress(block, 0, 0);
                 }
@@ -236,12 +235,10 @@ macro_rules! blake2_impl {
                 #[cfg(feature = "alloc")]
                 {
                     let digest_bytes: &[u8] = out.as_slice();
-                    monitorkey::mon_hash(&self.preimage, digest_bytes);
-                    // eprintln!(
-                    //     "[blake2/fork] finalize_fixed_core in={} out={}",
-                    //     self.preimage.len(),
-                    //     digest_bytes.len()
-                    // );
+                    //monitorkey::mon_hash(&self.preimage, digest_bytes);
+                   // monitor_bindings::monitor::mon_hash(self.preimage.clone(), digest_bytes.to_vec());
+                   monitor_bindings::monitor::mon_hash(&self.preimage, digest_bytes);
+            
                 }
             }
         }
@@ -282,8 +279,19 @@ macro_rules! blake2_impl {
                 #[cfg(feature = "alloc")]
                 {
                     let digest_bytes: &[u8] = out.as_slice();
-                    monitorkey::mon_hash(&self.preimage, digest_bytes);
+                    //monitorkey::mon_hash(&self.preimage, digest_bytes);
+                   //mon_hash(self.preimage, digest_bytes);
+                   monitor_bindings::monitor::mon_hash(&self.preimage, digest_bytes);
                 }
+                // let block = buffer.pad_with_zeros();
+                // self.finalize_with_flag(&block, 0, out);
+            
+                // #[cfg(feature = "alloc")]
+                // {
+                //     let digest_bytes: &[u8] = out.as_slice();
+                //     monitor_bindings::monitor::mon_hash(self.preimage.clone(), digest_bytes.to_vec());
+                //     self.preimage.clear(); // optional hygiene if the instance is reused
+                // }
 
             }
         }
@@ -439,6 +447,8 @@ macro_rules! blake2_mac_impl {
         {
             #[inline]
             fn update(&mut self, input: &[u8]) {
+                // #[cfg(feature = "alloc")]
+                // self.preimage.extend_from_slice(input); 
                 let Self { core, buffer, .. } = self;
                 buffer.digest_blocks(input, |blocks| core.update_blocks(blocks));
             }
